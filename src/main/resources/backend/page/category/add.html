@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../../plugins/element-ui/index.css" />
+    <link rel="stylesheet" href="../../styles/common.css" />
+    <link rel="stylesheet" href="../../styles/page.css" />
+</head>
+<body>
+<div class="addBrand-container" id="category-add-app">
+    <div class="container">
+        <el-form
+           ref="classData"
+           :model="classData"
+           class="demo-ruleForm"
+           :inline="false"
+           :rules="rules"
+           label-width="180px"
+        >
+          <el-form-item
+             label="小区名称："
+              prop="name">
+             <el-input
+                v-model="classData.name"
+                placeholder="请输入小区名称"
+                maxlength="14"
+             />
+          </el-form-item>
+
+          <el-form-item
+                label="id号："
+                prop="idn">
+              <el-input v-model="classData.idn"  type="number" placeholder="请输入id号"
+              />
+          </el-form-item>
+
+        </el-form>
+        <span
+           slot="footer"
+           class="dialog-footer"
+        >
+        <el-button
+           size="medium"
+           @click="goBack()"
+        >取 消</el-button>
+        <el-button
+           type="primary"
+           size="medium"
+           @click="submitForm('classData')"
+        >确 定</el-button>
+      </span>
+    </div>
+</div>
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="../../plugins/vue/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="../../plugins/element-ui/index.js"></script>
+<!-- 引入axios -->
+<script src="../../plugins/axios/axios.min.js"></script>
+<script src="../../js/request.js"></script>
+<script src="../../api/category.js"></script>
+<script src="../../js/validate.js"></script>
+<script src="../../js/index.js"></script>
+<script>
+    new Vue({
+        el: '#category-add-app',
+        data() {
+            return {
+                id:'',
+                action: '',
+                counts: 0,
+                page: 1,
+                pageSize: 10,
+                categoryList: [],
+                classData: {
+                    'name': '',
+                    'idn':'',
+                    type :1,
+                }
+            }
+        },
+        computed: {
+            rules () {
+                return {
+                    'name': [{'required': true, 'validator': checkCategoryName, 'trigger': 'blur'}],
+                    'idn': [{'required': true, 'validator':(rule, value, callback) =>checkCategoryId(rule,value,callback,this.classData.idn,this.categoryList), 'trigger': 'blur'}]
+                }
+            }
+        },
+        created() {
+            this.getCategoryList()
+            this.id = requestUrlParam('id')
+            this.action = this.id ? 'edit' : 'add'
+            if (this.id) {
+                this.init()
+            }
+        },
+        mounted() {
+        },
+        methods: {
+            async init () {
+                queryCategoryById(this.id).then(res => {
+                    console.log(res)
+                    if (String(res.code) === '1') {
+                        this.classData = { ...res.data }
+                    } else {
+                        this.$message.error(res.msg || '操作失败')
+                    }
+                })
+            },
+
+            getCategoryList () {
+                getCategoryList({ 'type': 1 }).then(res => {
+                    if (res.code === 1) {
+                        this.categoryList = res.data
+                    } else {
+                        this.$message.error(res.msg || '失败')
+                    }
+                })
+            },
+            //数据提交
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        if (this.action === 'add') {
+                            const params = {
+                                ...this.classData,
+                            }
+                            addCategory(params).then(res => {
+                                if (res.code === 1) {
+                                    this.$message.success('小区添加成功！')
+                                    this.goBack()
+                                }
+                                else {
+                                    this.$message.error(res.msg || '操作失败')
+                                }
+                            }).catch(err => {
+                                this.$message.error('请求出错了：' + err)
+                            })
+                        }
+                        else {
+                            const params = {
+                                ...this.classData,
+                            }
+                            editCategory1(params).then(res => {
+                                if (res.code === 1) {
+                                    this.$message.success('小区信息修改成功！')
+                                    this.goBack()
+                                }
+                                else {
+                                    this.$message.error(res.msg || '操作失败')
+                                }
+                            }).catch(err => {
+                                this.$message.error('请求出错了：' + err)
+                            })
+                        }
+                    }
+                    else {
+                        console.log('错误提交!!')
+                        return false
+                    }
+                })
+            },
+
+            goBack(){
+                window.parent.menuHandle({
+                    url: '/backend/page/category/list.html',
+                    name: '小区管理'
+                },false)
+            }
+        }
+    })
+</script>
+</body>
+</html>

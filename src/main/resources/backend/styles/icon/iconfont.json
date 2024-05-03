@@ -1,0 +1,114 @@
+{
+  "id": "4363736",
+  "name": "sq",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "185012",
+      "name": "589-公司",
+      "font_class": "589gongsi",
+      "unicode": "e9cd",
+      "unicode_decimal": 59853
+    },
+    {
+      "icon_id": "3624327",
+      "name": "获取小区楼栋",
+      "font_class": "huoquxiaoquloudong",
+      "unicode": "e696",
+      "unicode_decimal": 59030
+    },
+    {
+      "icon_id": "25841955",
+      "name": "房屋登记",
+      "font_class": "fangwudengji",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "2325936",
+      "name": "添加用户",
+      "font_class": "tianjiayonghu",
+      "unicode": "e643",
+      "unicode_decimal": 58947
+    },
+    {
+      "icon_id": "3590932",
+      "name": "分区管理",
+      "font_class": "fenquguanli",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "6540380",
+      "name": "关机",
+      "font_class": "guanji",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "10593835",
+      "name": "用户-角色-用户名-单人_jurassic",
+      "font_class": "jurassic_user",
+      "unicode": "e6a4",
+      "unicode_decimal": 59044
+    },
+    {
+      "icon_id": "11643870",
+      "name": "parking",
+      "font_class": "parking",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "12486908",
+      "name": "项目符号",
+      "font_class": "xiangmufuhao",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "18494112",
+      "name": "用户列表",
+      "font_class": "yonghuliebiao",
+      "unicode": "e7f1",
+      "unicode_decimal": 59377
+    },
+    {
+      "icon_id": "19378122",
+      "name": "添加列表",
+      "font_class": "tianjialiebiao",
+      "unicode": "e625",
+      "unicode_decimal": 58917
+    },
+    {
+      "icon_id": "21905630",
+      "name": "用户列表",
+      "font_class": "yonghuliebiao1",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
+      "icon_id": "22221981",
+      "name": "小区管理",
+      "font_class": "xiaoquguanli",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
+      "icon_id": "24786471",
+      "name": "停车场列表",
+      "font_class": "tingchechangliebiao",
+      "unicode": "e78a",
+      "unicode_decimal": 59274
+    },
+    {
+      "icon_id": "25076758",
+      "name": "停车场列表",
+      "font_class": "tingchechangliebiao1",
+      "unicode": "e6c2",
+      "unicode_decimal": 59074
+    }
+  ]
+}

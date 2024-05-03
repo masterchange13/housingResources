@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="../../plugins/element-ui/index.css" />
+  <link rel="stylesheet" href="../../styles/common.css" />
+  <link rel="stylesheet" href="../../styles/page.css" />
+</head>
+<body>
+  <div class="dashboard-container" id="category-app">
+
+    <div class="container">
+
+      <el-table
+        :data="tableData"
+        stripe
+        class="tableBox"
+      >
+        <el-table-column
+          prop="name"
+          label="分类名称"
+        />
+        </el-table-column>
+
+        <el-table-column
+          prop="type"
+          label="分类类型"
+        >
+          <template slot-scope="scope">
+            <span>{{'房屋分类'}}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="idn"
+          label="小区地址路牌号"
+        />
+        </el-table-column>
+
+        <el-table-column
+          label="操作"
+          width="160"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <button
+              type="text"
+              size="small"
+              class="blueBug"
+              @click="addClass(scope.row.id)"
+              v-if="user === 1"
+            >
+              编辑
+            </button>
+            <button
+              type="text"
+              size="small"
+              class="delBut non"
+              @click="deleteHandle(scope.row.id)"
+              v-if="user === 1"
+            >
+              删除
+            </button>
+          </template>
+        </el-table-column>
+
+      </el-table>
+      <el-pagination
+        class="pageList"
+        :page-sizes="[10, 20, 30, 40]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="counts"
+        @current-change="handleCurrentChange"
+      >
+      </el-pagination>
+    </div>
+
+  </div>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="../../plugins/vue/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="../../plugins/element-ui/index.js"></script>
+    <!-- 引入axios -->
+    <script src="../../plugins/axios/axios.min.js"></script>
+    <script src="../../js/request.js"></script>
+    <script src="../../api/category.js"></script>
+    <script>
+      new Vue({
+        el: '#category-app',
+        data() {
+          return {
+            action: '',
+            counts: 0,
+            page: 1,
+            pageSize: 10,
+            tableData: [],
+            type :'',
+            classData: {
+              'title': '添加小区',
+              'categoryId': '',
+              'name': '',
+              'id':'',
+              'idn':''
+            }
+          }
+        },
+        computed: {},
+        created() {
+          this.init()
+          if(localStorage.getItem('userInfo') != null){
+            //获取当前登录，并赋值给模型数据user
+            this.user = JSON.parse(localStorage.getItem('userInfo')).purview
+          }
+        },
+        mounted() {
+        },
+        methods: {
+          async init () {
+            await getCategoryPage({'page': this.page, 'pageSize': this.pageSize}).then(res => {
+              if (String(res.code) === '1') {
+                this.tableData = res.data.records
+                this.counts = Number(res.data.total)
+              } else {
+                this.$message.error(res.msg || '操作失败')
+              }
+            }).catch(err => {
+              this.$message.error('请求出错了：' + err)
+            })
+          },
+          handleQuery() {
+            this.page = 1;
+            this.init();
+          },
+           // 修改
+          addClass(st) {
+            window.parent.menuHandle({
+              url: '/backend/page/category/add.html?id='+st,
+              name: '修改小区'
+            },true)
+          },
+          editHandle(dat) {
+            this.classData.title = '修改小区名称'
+            this.action = 'edit'
+            this.classData.name = dat.name
+            this.classData.id = dat.id
+            this.classData.dialogVisible = true
+          },
+          // 关闭弹窗
+          handleClose(st) {
+            this.classData.dialogVisible = false
+          },
+          //删除
+          deleteHandle(id) {
+            this.$confirm('是否继续删除?', '提示', {
+              'confirmButtonText': '确定',
+              'cancelButtonText': '取消',
+              'type': 'warning'
+            }).then(() => {
+              deleteCategory(id).then(res => {
+                if (res.code === 1) {
+                  this.$message.success('删除成功！')
+                  this.handleQuery()
+                } else {
+                  this.$message.error(res.msg || '操作失败')
+                }
+              }).catch(err => {
+                this.$message.error('请求出错了：' + err)
+              })
+            })
+          },
+          //数据提交
+          submitForm(st) {
+              const classData = this.classData
+              const valid = (classData.name === 0 ||classData.name)  && (classData.sort === 0 || classData.sort)
+              if (this.action === 'add') {
+                if (valid) {
+                  const reg = /^\d+$/
+                  if (reg.test(classData.sort)) {
+                    addCategory({'name': classData.name,'type':this.type, sort: classData.sort}).then(res => {
+                      console.log(res)
+                      if (res.code === 1) {
+                        this.$message.success('小区添加成功！')
+                        if (!st) {
+                          this.classData.dialogVisible = false
+                        } else {
+                          this.classData.name = ''
+                          this.classData.sort = ''
+                        }
+                        this.handleQuery()
+                      } else {
+                        this.$message.error(res.msg || '操作失败')
+                      }
+                    }).catch(err => {
+                      this.$message.error('请求出错了：' + err)
+                    })
+                  }
+                  else {
+                    this.$message.error('排序只能输入数字类型')
+                  }
+                  
+              } else {
+                  this.$message.error('请输入分类名称或排序')
+              }
+            }else if (valid) {
+              const reg = /^\d+$/
+              if (reg.test(this.classData.sort)) {
+                editCategory({'id':this.classData.id,'name': this.classData.name, sort: this.classData.sort}).then(res => {
+                  if (res.code === 1) {
+                    this.$message.success('分类修改成功！')
+
+                    this.handleQuery()
+                  }
+                  else {
+                    this.$message.error(res.msg || '操作失败')
+                  }
+                }).catch(err => {
+                  this.$message.error('请求出错了：' + err)
+                })
+              }
+              else {
+                this.$message.error('排序只能输入数字类型')
+              }
+            } else {
+              this.$message.error('请输入分类名称或排序')
+            }
+          },
+          handleCurrentChange (val) {
+            this.page = val
+            this.init()
+          }
+        }
+      })
+    </script>
+</body>
+</html>
